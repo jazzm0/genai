@@ -1,4 +1,5 @@
 import heapq
+import time
 
 import numpy as np
 
@@ -96,32 +97,35 @@ class Graph_Advanced(Graph):
         path.append(start)
 
         return min_distance, path
-    #
-    # def tsp_large_graph(self, start):
-    #     """
-    #     Solve the Travelling Salesman Problem for a large (~1000 node) complete graph starting from a specified node.
-    #     No requirement to find the optimal tour. Must run under 0.5 second and its solution must no
-    #
-    #     Parameters:
-    #     start: The starting node.
-    #
-    #     Returns:
-    #     A tuple containing the total distance of the tour and a list of nodes representing the tour path.
-    #     """
-    #     # Your code here
-    #     return dist, path
-    #
-    # def tsp_medium_graph(self, start):
-    #     """
-    #     Solve the Travelling Salesman Problem for a medium (~100 node) complete graph starting from a specified node.
-    #     Expected to perform better than tsp_large_graph. Must run under 1 second.
-    #
-    #     Parameters:
-    #     start: The starting node.
-    #
-    #     Returns:
-    #     A tuple containing the total distance of the tour and a list of nodes representing the tour path.
-    #     """
-    #
-    #     # Your code here
-    #     return dist, path
+
+    def solve_with_time_limit(self, start, limit):
+        start_time = time.time()
+        vertices = list(self.graph.keys())
+        if start not in vertices:
+            raise ValueError("The starting vertex must be in the graph.")
+
+        unvisited = set(vertices)
+        unvisited.remove(start)
+        current = start
+        path = [start]
+        total_distance = 0
+
+        while unvisited and time.time() - start_time < limit:
+            next_node = min(unvisited, key=lambda node: self._get_edge_weight(current, node))
+            total_distance += self._get_edge_weight(current, next_node)
+            path.append(next_node)
+            current = next_node
+            unvisited.remove(next_node)
+
+        # Return to the start node
+        if path[-1] != start:
+            total_distance += self._get_edge_weight(current, start)
+            path.append(start)
+
+        return total_distance, path
+
+    def tsp_large_graph(self, start):
+        return self.solve_with_time_limit(start, 0.5)
+
+    def tsp_medium_graph(self, start):
+        return self.solve_with_time_limit(start, 1.3)

@@ -28,6 +28,6 @@ def generate_graph(nodes, edges=None, complete=False, weight_bounds=(1, 600), se
 
 
 for i in range(42, 47):
-    graph = generate_graph(nodes=10, complete=True, seed=i)
-    print(graph.tsp_small_graph(0))
+    graph = generate_graph(nodes=1000, complete=True, seed=i)
+    print(graph.tsp_large_graph(0))
     print("\n")
